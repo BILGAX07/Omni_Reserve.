@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: omnireserve-postgres
+    environment:
+      POSTGRES_DB: OmniReserveDb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - omnireserve_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  omnireserve_postgres_data:
