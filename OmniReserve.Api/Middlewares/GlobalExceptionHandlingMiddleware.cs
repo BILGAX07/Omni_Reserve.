@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using ValidationException =
+    OmniReserve.Application.Common.Exceptions.ValidationException;
 
 namespace OmniReserve.Api.Middlewares;
 
@@ -36,16 +38,38 @@ public class GlobalExceptionHandlingMiddleware
         Exception exception)
     {
         context.Response.ContentType = "application/problem+json";
+
+        if (exception is ValidationException validationEx)
+        {
+            context.Response.StatusCode =
+                StatusCodes.Status400BadRequest;
+
+            var problemDetails = new ProblemDetails
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Title = "Error de Validación"
+            };
+
+            problemDetails.Extensions.Add(
+                "errors",
+                validationEx.Errors);
+
+            await context.Response.WriteAsJsonAsync(problemDetails);
+
+            return;
+        }
+
         context.Response.StatusCode =
             StatusCodes.Status500InternalServerError;
 
-        var problemDetails = new ProblemDetails
+        var genericProblemDetails = new ProblemDetails
         {
             Status = StatusCodes.Status500InternalServerError,
             Title = "Error interno del servidor",
             Detail = "Ocurrió un error inesperado."
         };
 
-        await context.Response.WriteAsJsonAsync(problemDetails);
+        await context.Response.WriteAsJsonAsync(
+            genericProblemDetails);
     }
 }
