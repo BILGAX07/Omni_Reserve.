@@ -1,4 +1,5 @@
 using OmniReserve.Domain.Enums;
+using OmniReserve.Domain.Exceptions;
 
 namespace OmniReserve.Domain.Entities;
 
@@ -21,8 +22,7 @@ public class Reservation
     {
         if (checkInDate >= checkOutDate)
         {
-            throw new ArgumentException(
-                "La fecha de entrada debe ser menor a la fecha de salida.");
+            throw new InvalidReservationDatesException();
         }
 
         Id = Guid.NewGuid();
