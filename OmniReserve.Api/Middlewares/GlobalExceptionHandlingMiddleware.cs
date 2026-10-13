@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ValidationException =
     OmniReserve.Application.Common.Exceptions.ValidationException;
+using OmniReserve.Domain.Exceptions;
 
 namespace OmniReserve.Api.Middlewares;
 
@@ -34,42 +35,58 @@ public class GlobalExceptionHandlingMiddleware
     }
 
     private async Task HandleExceptionAsync(
-        HttpContext context,
-        Exception exception)
+    HttpContext context,
+    Exception exception)
+{
+    context.Response.ContentType = "application/problem+json";
+
+    if (exception is ValidationException validationEx)
     {
-        context.Response.ContentType = "application/problem+json";
-
-        if (exception is ValidationException validationEx)
-        {
-            context.Response.StatusCode =
-                StatusCodes.Status400BadRequest;
-
-            var problemDetails = new ProblemDetails
-            {
-                Status = StatusCodes.Status400BadRequest,
-                Title = "Error de Validación"
-            };
-
-            problemDetails.Extensions.Add(
-                "errors",
-                validationEx.Errors);
-
-            await context.Response.WriteAsJsonAsync(problemDetails);
-
-            return;
-        }
-
         context.Response.StatusCode =
-            StatusCodes.Status500InternalServerError;
+            StatusCodes.Status400BadRequest;
 
-        var genericProblemDetails = new ProblemDetails
+        var problemDetails = new ProblemDetails
         {
-            Status = StatusCodes.Status500InternalServerError,
-            Title = "Error interno del servidor",
-            Detail = "Ocurrió un error inesperado."
+            Status = StatusCodes.Status400BadRequest,
+            Title = "Error de Validación"
         };
 
-        await context.Response.WriteAsJsonAsync(
-            genericProblemDetails);
+        problemDetails.Extensions.Add(
+            "errors",
+            validationEx.Errors);
+
+        await context.Response.WriteAsJsonAsync(problemDetails);
+
+        return;
     }
+    else if (exception is DomainException domainEx)
+    {
+        context.Response.StatusCode =
+            StatusCodes.Status400BadRequest;
+
+        var problemDetails = new ProblemDetails
+        {
+            Status = StatusCodes.Status400BadRequest,
+            Title = "Error de Dominio",
+            Detail = domainEx.Message
+        };
+
+        await context.Response.WriteAsJsonAsync(problemDetails);
+
+        return;
+    }
+
+    context.Response.StatusCode =
+        StatusCodes.Status500InternalServerError;
+
+    var genericProblemDetails = new ProblemDetails
+    {
+        Status = StatusCodes.Status500InternalServerError,
+        Title = "Error interno del servidor",
+        Detail = "Ocurrió un error inesperado."
+    };
+
+    await context.Response.WriteAsJsonAsync(
+        genericProblemDetails);
+}
 }
