@@ -18,6 +18,7 @@ public static class DependencyInjection
                 configuration.GetConnectionString("OmniReserveDb")));
 
         services.AddScoped<IRoomRepository, RoomRepository>();
+        services.AddScoped<IReservationRepository, ReservationRepository>();
 
         return services;
     }

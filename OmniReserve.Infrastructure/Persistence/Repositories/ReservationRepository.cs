@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using OmniReserve.Application.Common.Interfaces;
 using OmniReserve.Domain.Entities;
 
@@ -12,8 +13,11 @@ public class ReservationRepository : IReservationRepository
         _context = context;
     }
 
-    public Task<Reservation?> GetReservationWithDetailsAsync(Guid id)
+    public async Task<Reservation?> GetReservationWithDetailsAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await _context.Reservations
+            .Include(reservation => reservation.User)
+            .Include(reservation => reservation.Room)
+            .FirstOrDefaultAsync(reservation => reservation.Id == id);
     }
 }
