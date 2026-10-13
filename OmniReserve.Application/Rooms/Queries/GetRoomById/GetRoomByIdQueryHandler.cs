@@ -3,31 +3,37 @@ using OmniReserve.Application.Common.Interfaces;
 
 namespace OmniReserve.Application.Rooms.Queries.GetRoomById;
 
-public class GetRoomByIdQueryHandler : IRequestHandler<GetRoomByIdQuery, RoomResponseDto>
+public class GetRoomByIdQueryHandler
+    : IRequestHandler<GetRoomByIdQuery, RoomResponseDto>
 {
     private readonly IRoomRepository _roomRepository;
 
-    public GetRoomByIdQueryHandler(IRoomRepository roomRepository)
+    public GetRoomByIdQueryHandler(
+        IRoomRepository roomRepository)
     {
         _roomRepository = roomRepository;
     }
 
-    public async Task<RoomResponseDto> Handle(GetRoomByIdQuery request, CancellationToken cancellationToken)
+    public async Task<RoomResponseDto> Handle(
+        GetRoomByIdQuery request,
+        CancellationToken cancellationToken)
     {
-        // 1. Buscar en Repositorio
-        var room = await _roomRepository.GetByIdAsync(request.RoomId);
-        
-        if (room is null)
-            throw new Exception("Habitación no encontrada");
+        var room = await _roomRepository.GetByIdAsync(
+            request.RoomId);
 
-        // 2. Mapear a DTO (Ocultar Entidad)
-        var response = new RoomResponseDto(
-            room.Id, 
-            room.RoomNumber, 
-            room.Type.ToString(), 
-            room.PricePerNight, 
-            room.IsAvailable
-        );
+        if (room is null)
+        {
+            throw new Exception("Cuarto no encontrado");
+        }
+
+        var response = new RoomResponseDto
+        {
+            Id = room.Id,
+            RoomNumber = room.RoomNumber,
+            Type = room.Type.ToString(),
+            Price = room.PricePerNight,
+            IsAvailable = room.IsAvailable
+        };
 
         return response;
     }
