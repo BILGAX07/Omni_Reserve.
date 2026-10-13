@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
+
+//commit
 #nullable disable
 
 namespace OmniReserve.Infrastructure.Migrations
