@@ -28,6 +28,13 @@ public class RoomsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetRoom(Guid id)
     {
-        return Ok();
+        var query = new GetRoomByIdQuery
+        {
+            RoomId = id
+        };
+
+        var result = await _sender.Send(query);
+
+        return Ok(result);
     }
 }
