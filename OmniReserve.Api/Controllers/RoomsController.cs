@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OmniReserve.Application.Rooms.Commands.CreateRoom;
 
 namespace OmniReserve.Api.Controllers;
 
@@ -12,5 +13,14 @@ public class RoomsController : ControllerBase
     public RoomsController(ISender sender)
     {
         _sender = sender;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateRoom(
+        CreateRoomCommand command)
+    {
+        var resultado = await _sender.Send(command);
+
+        return Ok(resultado);
     }
 }
