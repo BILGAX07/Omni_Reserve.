@@ -15,16 +15,20 @@ public class RoomRepository : IRoomRepository
 
     public async Task AddAsync(Room room)
     {
-        // EF Core trackea la Entidad
         await _context.Rooms.AddAsync(room);
-        
-        // ¡Crucial! Confirma (Commit) a la base de datos real
+
         await _context.SaveChangesAsync();
     }
 
     public async Task<Room?> GetByIdAsync(Guid id)
     {
-        // Se conecta a PostgreSQL para obtener o retornar nulo
-        return await _context.Rooms.FirstOrDefaultAsync(r => r.Id == id);
+        return await _context.Rooms.FirstOrDefaultAsync(
+            room => room.Id == id);
+    }
+
+    public async Task<Room?> SearchByNumberAsync(string roomNumber)
+    {
+        return await _context.Rooms.FirstOrDefaultAsync(
+            room => room.RoomNumber == roomNumber);
     }
 }
