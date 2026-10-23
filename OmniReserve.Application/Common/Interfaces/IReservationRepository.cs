@@ -10,4 +10,6 @@ public interface IReservationRepository
         Guid roomId,
         DateTime start,
         DateTime end);
+
+    Task AddAsync(Reservation reservation);
 }
