@@ -20,4 +20,16 @@ public class ReservationRepository : IReservationRepository
             .Include(reservation => reservation.Room)
             .FirstOrDefaultAsync(reservation => reservation.Id == id);
     }
+
+    public async Task<bool> IsRoomAvailableAsync(
+    Guid roomId,
+    DateTime start,
+    DateTime end)
+{
+    return !await _context.Reservations
+        .AnyAsync(r =>
+            r.RoomId == roomId &&
+            r.CheckInDate < end &&
+            r.CheckOutDate > start);
+}
 }
