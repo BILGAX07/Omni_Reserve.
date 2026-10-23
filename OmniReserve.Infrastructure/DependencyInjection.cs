@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OmniReserve.Application.Common.Interfaces;
 using OmniReserve.Infrastructure.Persistence;
+using OmniReserve.Infrastructure.Security;
 using OmniReserve.Infrastructure.Persistence.Repositories;
 
 namespace OmniReserve.Infrastructure;
@@ -19,6 +20,7 @@ public static class DependencyInjection
 
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IReservationRepository, ReservationRepository>();
+        services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
 
         return services;
     }
