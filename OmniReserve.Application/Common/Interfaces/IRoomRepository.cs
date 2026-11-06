@@ -1,3 +1,4 @@
+
 using OmniReserve.Domain.Entities;
 
 namespace OmniReserve.Application.Common.Interfaces;
@@ -11,4 +12,6 @@ public interface IRoomRepository
     Task<Room?> SearchByNumberAsync(string roomNumber);
 
     Task<List<Room>> GetRoomsByTypeRawAsync(string roomType);
+
+    Task<List<Room>> GetAllAsync();
 }
