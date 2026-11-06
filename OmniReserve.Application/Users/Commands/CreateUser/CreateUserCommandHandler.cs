@@ -31,8 +31,7 @@ public class CreateUserCommandHandler
             request.FirstName,
             request.LastName,
             email,
-            secureHash,
-            request.Role);
+            secureHash);
 
         await _userRepository.AddAsync(user);
 

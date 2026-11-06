@@ -1,4 +1,4 @@
-using OmniReserve.Domain.Enums;
+using OmniReserve.Domain.Constants;
 using OmniReserve.Domain.ValueObjects;
 
 namespace OmniReserve.Domain.Entities;
@@ -10,7 +10,7 @@ public class User
     public string LastName { get; private set; }
     public EmailAddress Email { get; private set; }
     public string PasswordHash { get; private set; }
-    public Role Role { get; private set; }
+    public string Role { get; private set; }
 
     public ICollection<Reservation> Reservations { get; private set; }
         = new List<Reservation>();
@@ -19,8 +19,7 @@ public class User
         string firstName,
         string lastName,
         EmailAddress email,
-        string passwordHash,
-        Role role)
+        string passwordHash)
     {
         Id = Guid.NewGuid();
 
@@ -39,6 +38,6 @@ public class User
             ? throw new ArgumentNullException(nameof(passwordHash))
             : passwordHash;
 
-        Role = role;
+        Role = Roles.Client;
     }
 }
