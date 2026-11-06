@@ -16,6 +16,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+// Configuración de Redis.
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration
+        .GetConnectionString("RedisConnection");
+});
+
 // Configuración de autenticación JWT.
 var jwtSettings = builder.Configuration
     .GetSection(JwtSettings.SectionName)
@@ -49,7 +56,6 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();
