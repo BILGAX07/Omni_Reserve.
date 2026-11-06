@@ -1,3 +1,4 @@
+
 services:
   postgres:
     image: postgres:17
@@ -10,6 +11,12 @@ services:
       - "5433:5432"
     volumes:
       - omnireserve_postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:alpine
+    container_name: omnireserve-redis
+    ports:
+      - "6379:6379"
 
 volumes:
   omnireserve_postgres_data:
