@@ -20,22 +20,30 @@ public class ReservationRepository : IReservationRepository
             .Include(reservation => reservation.Room)
             .FirstOrDefaultAsync(reservation => reservation.Id == id);
     }
-    
-    // Verifica si existe alguna reservación que se superponga con el rango solicitado.
+
     public async Task<bool> IsRoomAvailableAsync(
-    Guid roomId,
-    DateTime start,
-    DateTime end)
+        Guid roomId,
+        DateTime start,
+        DateTime end)
     {
-    return !await _context.Reservations
-        .AnyAsync(r =>
-            r.RoomId == roomId &&
-            r.CheckInDate < end &&
-            r.CheckOutDate > start);
+        return !await _context.Reservations
+            .AnyAsync(reservation =>
+                reservation.RoomId == roomId &&
+                reservation.CheckInDate < end &&
+                reservation.CheckOutDate > start);
     }
+
+    public async Task<List<Reservation>> GetAllAsync()
+    {
+        return await _context.Reservations
+            .Include(reservation => reservation.User)
+            .Include(reservation => reservation.Room)
+            .ToListAsync();
+    }
+
     public async Task AddAsync(Reservation reservation)
-{
-    await _context.Reservations.AddAsync(reservation);
-    await _context.SaveChangesAsync();
-}
+    {
+        await _context.Reservations.AddAsync(reservation);
+        await _context.SaveChangesAsync();
+    }
 }
