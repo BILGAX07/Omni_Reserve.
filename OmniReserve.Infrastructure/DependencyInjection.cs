@@ -1,10 +1,11 @@
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OmniReserve.Application.Common.Interfaces;
 using OmniReserve.Infrastructure.Persistence;
-using OmniReserve.Infrastructure.Security;
 using OmniReserve.Infrastructure.Persistence.Repositories;
+using OmniReserve.Infrastructure.Security;
 
 namespace OmniReserve.Infrastructure;
 
@@ -18,9 +19,13 @@ public static class DependencyInjection
             options.UseNpgsql(
                 configuration.GetConnectionString("OmniReserveDb")));
 
+        services.Configure<JwtSettings>(
+            configuration.GetSection(JwtSettings.SectionName));
+
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IReservationRepository, ReservationRepository>();
         services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
+        services.AddScoped<IJwtProvider, JwtProvider>();
 
         return services;
     }
