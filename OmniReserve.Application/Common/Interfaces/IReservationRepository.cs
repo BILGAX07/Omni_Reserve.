@@ -11,5 +11,7 @@ public interface IReservationRepository
         DateTime start,
         DateTime end);
 
+    Task<List<Reservation>> GetAllAsync();
+
     Task AddAsync(Reservation reservation);
 }
