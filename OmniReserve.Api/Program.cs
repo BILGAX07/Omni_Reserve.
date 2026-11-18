@@ -70,6 +70,10 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+
+app.UseRouting();
+app.UseRateLimiter();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
