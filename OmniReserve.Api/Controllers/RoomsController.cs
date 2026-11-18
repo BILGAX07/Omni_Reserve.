@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using OmniReserve.Application.Rooms.Commands.CreateRoom;
+using OmniReserve.Application.Rooms.Queries.GetAllRooms;
 using OmniReserve.Application.Rooms.Queries.GetRoomById;
 
 namespace OmniReserve.Api.Controllers;
@@ -26,6 +27,19 @@ public class RoomsController : ControllerBase
         var resultado = await _sender.Send(command);
 
         return Ok(resultado);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllRooms(
+        CancellationToken cancellationToken)
+    {
+        var query = new GetAllRoomsQuery();
+
+        var result = await _sender.Send(
+            query,
+            cancellationToken);
+
+        return Ok(result);
     }
 
     [HttpGet("{id}")]
