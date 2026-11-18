@@ -1,4 +1,3 @@
-
 using System.Net;
 using System.Text;
 
@@ -45,5 +44,31 @@ public class RoomsControllerTests
             content);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task CreateRoom_ReturnsCreatedResponse()
+    {
+        using var factory = new OmniReserveWebApplicationFactory();
+        using var client = factory.CreateClient();
+
+        var json = """
+        {
+            "roomNumber": "999",
+            "type": 2,
+            "pricePerNight": 500
+        }
+        """;
+
+        var content = new StringContent(
+            json,
+            Encoding.UTF8,
+            "application/json");
+
+        var response = await client.PostAsync(
+            "/api/rooms",
+            content);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 }
