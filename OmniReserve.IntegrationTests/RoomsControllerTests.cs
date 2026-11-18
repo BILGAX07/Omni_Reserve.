@@ -1,5 +1,6 @@
 
 using System.Net;
+using System.Text;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -22,6 +23,36 @@ public class RoomsControllerTests
         var response = await client.GetAsync("/api/rooms");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetRoomById_WhenRoomDoesNotExist_ReturnsNotFound()
+    {
+        using var factory = new TestWebApplicationFactory();
+        using var client = factory.CreateClient();
+
+        var response = await client.GetAsync(
+            $"/api/rooms/{Guid.NewGuid()}");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task CreateRoom_WithInvalidJson_ReturnsBadRequest()
+    {
+        using var factory = new TestWebApplicationFactory();
+        using var client = factory.CreateClient();
+
+        var content = new StringContent(
+            "{",
+            Encoding.UTF8,
+            "application/json");
+
+        var response = await client.PostAsync(
+            "/api/rooms",
+            content);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 }
 
