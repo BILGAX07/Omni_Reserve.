@@ -50,6 +50,7 @@ builder.Services
     });
 
 // Configuración de Rate Limiting.
+
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -60,7 +61,15 @@ builder.Services.AddRateLimiter(options =>
         limiterOptions.Window = TimeSpan.FromMinutes(1);
         limiterOptions.QueueLimit = 0;
     });
+
+    options.AddFixedWindowLimiter("AuthLimit", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 3;
+        limiterOptions.Window = TimeSpan.FromSeconds(30);
+        limiterOptions.QueueLimit = 0;
+    });
 });
+
 
 var app = builder.Build();
 
