@@ -46,15 +46,51 @@ public class CreateReservationCommandHandlerTests
             command,
             CancellationToken.None);
 
-            //asd
-
         // Assert
         Assert.NotEqual(Guid.Empty, result);
 
         await reservationRepoMock
             .Received(1)
             .AddAsync(Arg.Any<Reservation>());
+    }
 
-        
+    [Fact]
+    public async Task Handle_WhenRoomIsNotAvailable_ThrowsException()
+    {
+        // Arrange
+        var reservationRepoMock = Substitute.For<IReservationRepository>();
+        var roomRepoMock = Substitute.For<IRoomRepository>();
+
+        var roomId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
+
+        reservationRepoMock
+            .IsRoomAvailableAsync(
+                roomId,
+                Arg.Any<DateTime>(),
+                Arg.Any<DateTime>())
+            .Returns(false);
+
+        var handler = new CreateReservationCommandHandler(
+            reservationRepoMock,
+            roomRepoMock);
+
+        var command = new CreateReservationCommand(
+            userId,
+            roomId,
+            DateTime.UtcNow.AddDays(1),
+            DateTime.UtcNow.AddDays(3));
+
+        // Act
+        var act = () => handler.Handle(
+            command,
+            CancellationToken.None);
+
+        // Assert
+        await Assert.ThrowsAsync<Exception>(act);
+
+        await reservationRepoMock
+    .DidNotReceive()
+    .AddAsync(Arg.Any<Reservation>());
     }
 }
