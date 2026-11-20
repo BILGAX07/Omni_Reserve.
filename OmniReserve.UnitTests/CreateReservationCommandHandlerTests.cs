@@ -46,11 +46,15 @@ public class CreateReservationCommandHandlerTests
             command,
             CancellationToken.None);
 
+            //asd
+
         // Assert
         Assert.NotEqual(Guid.Empty, result);
 
         await reservationRepoMock
             .Received(1)
             .AddAsync(Arg.Any<Reservation>());
+
+        
     }
 }
