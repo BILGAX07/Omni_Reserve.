@@ -88,5 +88,9 @@ public class CreateReservationCommandHandlerTests
 
         // Assert
         await Assert.ThrowsAsync<Exception>(act);
+
+        await reservationRepoMock
+    .DidNotReceive()
+    .AddAsync(Arg.Any<Reservation>());
     }
 }
